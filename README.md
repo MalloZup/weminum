@@ -1,2 +1,4 @@
 # weminum
-minimal framework for testing web application
+
+Using terraform and chromedriver plus cucucumber for testing a webui application.
+
