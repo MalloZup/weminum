@@ -1,0 +1,9 @@
+# This file describes the order of features in a normal testsuite run.
+#
+# IMMUTABLE ORDER
+
+- features/core_first_settings.feature
+
+# IDEMPOTENT features, parallel execution
+
+- features/second_srv_performance.feature

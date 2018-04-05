@@ -1,0 +1,63 @@
+require 'rubygems'
+require 'yaml'
+require 'cucumber/rake/task'
+require 'fileutils'
+
+outputfile = 'output.html'
+html_results = "--format html -o #{outputfile}"
+junit_results = '--format junit -o results_junit'
+Dir.glob(File.join(Dir.pwd, 'run_sets', '*.yml')).each do |entry|
+  namespace :cucumber do
+    Cucumber::Rake::Task.new(File.basename(entry, '.yml').to_sym) do |t|
+      cucumber_opts = %W[#{html_results} #{junit_results} -f rerun --out failed.txt --format pretty]
+      features = YAML.safe_load(File.read(entry))
+      t.cucumber_opts = cucumber_opts + features
+    end
+  end
+end
+
+task :cucumber do
+  Rake::Task['cucumber:standard'].invoke
+end
+
+task default: [:cucumber]
+
+## PARALLEL CUCUMBER ###
+
+## running each run_sets feature in parallel with 2 or 3 or more chromium/chromedriver
+## depend on how much run_sets are created.  tested with 2 run_sets.
+
+TESTSUITES = FileList.new('run_sets/parallel/*.yml')
+
+def run_suite(suite_path, task_name=nil)
+  task_name = suite_path if task_name.nil?
+  result_dir = '/tmp/cucumber_parallel'
+  FileUtils.mkdir_p(result_dir) unless File.directory?(result_dir)
+  suite_name = File.basename(task_name, '.yml')
+  html_results = "--format html -o #{result_dir}/#{suite_name}.html"
+  junit_results = "--format junit -o #{result_dir}/results_junit#{suite_name}"
+  Cucumber::Rake::Task.new(task_name.to_sym) do |t|
+    cucumber_opts = %W[#{html_results} #{junit_results} -f rerun --out failed.txt --format pretty]
+    features = YAML.safe_load(File.read(suite_path))
+    t.cucumber_opts = cucumber_opts + features
+  end
+end
+
+TESTSUITES.each do |suite_name|
+  task suite_name do
+    run_suite(suite_name)
+  end
+end
+
+# this run them togheter in parallel, and fail if 1 of them fails (at the end)
+multitask secondary_parallel: TESTSUITES do
+  puts 'parallel tests done!'
+end
+
+task :core do
+  run_suite('run_sets/core.yml', 'core')
+end
+
+task :post_run do
+  run_suite('run_sets/postrun.yml', 'post_run')
+end
