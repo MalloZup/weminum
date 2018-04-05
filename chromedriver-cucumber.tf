@@ -4,7 +4,6 @@ provider "libvirt" {
 
 module "base" {
   source = "./modules/libvirt/base"
-  #  UC16 - 5f7a0ab563
   network_name = ""
   bridge = "br0"
   name_prefix = "dma-"
