@@ -1,6 +1,5 @@
 include:
   - default.repos
-  - default.pkgs
   {% if grains['hostname'] and grains['domain'] %}
   - default.hostname
   {% endif %}
@@ -23,29 +22,6 @@ minimal_package_update:
     - order: last
     - require:
       - sls: default.repos
-
-timezone_package:
-  pkg.installed:
-{% if grains['os_family'] == 'Suse' %}
-    - name: timezone
-{% else %}
-    - name: tzdata
-{% endif %}
-
-timezone_symlink:
-  file.symlink:
-    - name: /etc/localtime
-    - target: /usr/share/zoneinfo/{{ grains['timezone'] }}
-    - force: true
-    - require:
-      - pkg: timezone_package
-
-timezone_setting:
-  timezone.system:
-    - name: {{ grains['timezone'] }}
-    - utc: True
-    - require:
-      - file: timezone_symlink
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 update_sles_test:

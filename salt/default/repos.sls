@@ -390,24 +390,5 @@ tools_update_repo:
 
 {% endif %}
 
-{% if grains['additional_repos'] %}
-{% for label, url in grains['additional_repos'].items() %}
-{{ label }}_repo:
-  pkgrepo.managed:
-    - humanname: {{ label }}
-    - baseurl: {{ url }}
-    - priority: 94
-    - gpgcheck: 0
-{% endfor %}
-
-refresh_additional_repos:
-  cmd.run:
-    - name: zypper --non-interactive --gpg-auto-import-keys refresh
-    - require:
-      {% for label, url in grains['additional_repos'].items() %}
-      - pkgrepo: {{ label }}_repo
-      {% endfor %}
-{% endif %}
-
 default_repos:
   test.nop: []
