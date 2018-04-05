@@ -1,7 +1,7 @@
 require 'net/ssh'
 require 'stringio'
 
-def run(command, host: ENV['SERVER'], user: 'root', ignore_err: false)
+def run(command, host, user: 'root', ignore_err: false)
   # Execute a command on the remote server
   # Not passing :password uses systems keys for auth
   out = StringIO.new
@@ -13,9 +13,7 @@ def run(command, host: ENV['SERVER'], user: 'root', ignore_err: false)
     end
   end
 
-  if !ignore_err
-    raise "Execute command failed #{command}: #{err.string}"
-  end
+  raise "Execute command failed #{command}: #{err.string}" unless ignore_err
 
   { stdout: out.string, stderr: err.string }
 end
