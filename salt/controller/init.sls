@@ -16,6 +16,12 @@ ssh_public_key:
     - group: root
     - mode: 700
 
+gemfile_cucumber:
+  file.managed:
+    - name: /tmp/Gemfile
+    - source: salt://controller/Gemfile
+    - makedirs: True
+
 authorized_keys_controller:
   file.append:
     - name: /root/.ssh/authorized_keys
@@ -61,13 +67,12 @@ create_syslink_for_chromedriver:
     - name: /usr/bin/chromedriver
     - target: /usr/lib64/chromium/chromedriver
 
-## FIXME: add Gemfile for needed gems
-
 install_gems_via_bundle:
   cmd.run:
     - name: bundle.ruby2.1 install --gemfile /tmp/Gemfile
     - require:
       - pkg: cucumber_requisites
+      - file: gemfile_cucumber
 
 testsuite_env_vars:
   file.managed:
