@@ -16,6 +16,12 @@ ssh_public_key:
     - group: root
     - mode: 700
 
+/root/testsuite:
+file.recurse:
+    - source: salt://controller/testsuite
+    - user: root
+    - group: root
+
 gemfile_cucumber:
   file.managed:
     - name: /tmp/Gemfile
