@@ -4,8 +4,10 @@ provider "libvirt" {
 
 module "base" {
   source = "./modules/libvirt/base"
-  network_name = ""
-  bridge = "br0"
+// **  have a look at modules/libvirt/base/variables.tf  for variable definition
+//  network_name = ""
+//  bridge = ""
+// ** use you username as prefix
   name_prefix = "dma-"
 }
 
