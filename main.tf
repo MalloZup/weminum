@@ -9,7 +9,12 @@ module "base" {
 //  bridge = ""
 // ** use you username as prefix
   name_prefix = "dma-"
+
+// images OS see on module for full-list
+ images =   ["centos7", "opensuse423"]
 }
+
+// ctl is based on opensuse423
 
 module "ctl" {
   source = "./modules/libvirt/controller"
